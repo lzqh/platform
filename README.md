@@ -13,3 +13,7 @@ You can use them in this way:
 
 >./reactor_server 127.0.0.1 6852
 >./reactor_client 127.0.0.1 6852
+
+
+>g++ -o reactor_server server.cpp demultiplexer.cpp reactor.cpp
+>g++ -o reactor_client client.cpp demultiplexer.cpp reactor.cpp

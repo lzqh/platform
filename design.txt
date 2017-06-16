@@ -1,8 +1,73 @@
+in file included from reactor.cpp:1:0:
+reactor.h: In constructor ‘reactor::event_handler::event_handler()’:
+reactor.h:18:18: error: expected identifier before ‘{’ token
+  event_handler():{};
+                  ^
+reactor.h: In destructor ‘virtual reactor::event_handler::~event_handler()’:
+reactor.h:19:27: error: only constructors take member initializers
+  virtual ~event_handler():{};
+  
+solve:
+in event_handler class:
 
-virtual����
-namespace
-�Ƚ�map  list vertor tree array
+event_handler();
+virtual ~event_handler();
+
+
+client.cpp: In destructor ‘virtual client::~client()’:
+client.cpp:29:17: error: ‘close’ was not declared in this scope
+   close(m_handle);
+                 ^
+client.cpp: In function ‘int main(int, char**)’:
+client.cpp:102:10: error: ‘sleep’ was not declared in this scope
+   sleep(1);
 
 
 
+solve:
+in reactor.h
+add include declare
+#include <stdint.h>
+#include <unistd.h>
+#include <sys/epoll.h>
 
+
+
+client.cpp:104:36: error: invalid conversion from ‘client*’ to ‘reactor::event_t {aka unsigned int}’ [-fpermissive]
+  g_reactor.remove_handler(&m_client);
+                                    ^
+In file included from client.cpp:10:0:
+reactor.h:41:6: error:   initializing argument 1 of ‘int reactor::reactor::remove_handler(reactor::event_t)’ [-fpermissive]
+  int remove_handler(event_t evt);
+
+  
+solve:
+in reactor class:
+modify
+int remove_handler(event_t evt);  
+to
+int remove_handler(event_handler *);
+
+
+
+demultiplexer.cpp:3:5: error: ‘reactor’ has not been declared
+ int reactor::request_event(handle_t handle,event_t evt)
+     ^
+demultiplexer.cpp:3:28: error: ‘handle_t’ was not declared in this scope
+ int reactor::request_event(handle_t handle,event_t evt)
+                            ^
+demultiplexer.cpp:3:44: error: ‘event_t’ was not declared in this scope
+ int reactor::request_event(handle_t handle,event_t evt)
+                                            ^
+demultiplexer.cpp:3:55: error: expression list treated as compound expression in initializer [-fpermissive]
+ int reactor::request_event(handle_t handle,event_t evt)
+
+
+solve:
+in demultiplexer.h
+modidy
+#ifdef __DEMULTIPLEXER_H
+#define __DEMULTIPLEXER_H
+to
+#ifndef __DEMULTIPLEXER_H
+#define __DEMULTIPLEXER_H

@@ -7,17 +7,18 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include "test_common.h"
-
-
 #include "reactor.h"
 
-reactor::reactor g_reactor;
+using namespace reactorer;
+
+
+reactorer::reactor g_reactor;
 const size_t buffer_size = 1024;
 char read_buff[buffer_size];
 char write_buff[buffer_size];
 
-class client :public event_handler{
+
+class client :public reactorer::event_handler{
 public:
 	client()
 	{
@@ -72,17 +73,17 @@ public:
 		}
 	}
 
-	handle_t get_handle()
+	reactor::handle_t get_handle() const
 	{
-		return handle;
+		return m_handle;
 	}
 
 
 private:
-	handle_t m_handle;
+	reactorer::handle_t m_handle;
 };
 
-int main(int arg,char **argv)
+int main(int argc,char **argv)
 {
 	if(argc <3)
 	{
