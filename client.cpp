@@ -32,6 +32,7 @@ public:
 
 	int connet_server(const char *ip, unsigned short port)
 	{
+		printf("in connet_server \n");
 		struct sockaddr_in addr;
 		addr.sin_family = AF_INET;
 		addr.sin_port = htons(port);
@@ -45,6 +46,7 @@ public:
 	}
 	void  read_event()
 	{
+		printf("in read_event \n");
 		memset(read_buff, 0, buffer_size);
 		int len  = recv(m_handle, read_buff, buffer_size, 0);
 		if(len >0)
@@ -59,8 +61,9 @@ public:
 	}
 	void write_event()
 	{
+		printf("in write_event \n");
 		memset(write_buff, 0, buffer_size);
-		int len = sprintf(write_buff, "hello world! \r\n");
+		int len = sprintf(write_buff, "time\r\n");
 		len = send(m_handle, write_buff, len, 0);
 		if(len >0)
 		{
@@ -73,7 +76,7 @@ public:
 		}
 	}
 
-	reactor::handle_t get_handle() const
+	reactorer::handle_t get_handle() const
 	{
 		return m_handle;
 	}
@@ -90,20 +93,25 @@ int main(int argc,char **argv)
 		fprintf(stderr, "usage: %s ip port\n", argv[0]);
 		return EXIT_FAILURE;
 	}
+
 	client m_client;
 	if(!m_client.connet_server(argv[1], atoi(argv[2])))
 	{
 		 fprintf(stderr, "connect remote server failed\n");
 		 return EXIT_FAILURE;
 	}
-	g_reactor.register_handler(reactor::EV_WRITE, &m_client);
+
+
 	while(1)
 	{
+		g_reactor.register_handler(reactorer::EV_WRITE, &m_client);
+		//m_client.write_event();
 		g_reactor.handle_events();
-		sleep(1);
+		sleep(2);
 	}
 	g_reactor.remove_handler(&m_client);
 	return EXIT_SUCCESS;
+
 }
 
 

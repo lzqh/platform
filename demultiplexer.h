@@ -1,7 +1,6 @@
-#ifndef __DEMULTIPLEXER_H
+#ifndef  __DEMULTIPLEXER_H
 #define __DEMULTIPLEXER_H
 #include "reactor.h"
-
 
 namespace reactorer{
 class demultiplexer{

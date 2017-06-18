@@ -2,14 +2,16 @@
 #define __REACTOR_H
 
 #include <map>
-#include "demultiplexer.h"
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/epoll.h>
-
+//#include "demultiplexer.h"
 
 
 namespace reactorer{
+
+typedef int handle_t;
+typedef unsigned int event_t;
 
 class demultiplexer;
 enum{
@@ -17,8 +19,7 @@ enum{
 	EV_WRITE,
 };
 
-typedef int handle_t;
-typedef unsigned int event_t;
+
 
 class event_handler{
 public:

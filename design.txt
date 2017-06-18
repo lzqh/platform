@@ -71,3 +71,154 @@ modidy
 to
 #ifndef __DEMULTIPLEXER_H
 #define __DEMULTIPLEXER_H
+
+在reactor.h中，原来是这样定义的
+#include <map>
+#include <stdint.h>
+#include <unistd.h>
+#include <sys/epoll.h>
+#include "demultiplexer.h"
+
+demultiplexer.cpp:3:28: error: ‘handle_t’ was not declared in this scope
+ int reactor::request_event(handle_t handle,event_t evt)
+                            ^
+demultiplexer.cpp:3:44: error: ‘event_t’ was not declared in this scope
+ int reactor::request_event(handle_t handle,event_t evt)
+                                            ^
+demultiplexer.cpp:3:55: error: expression list treated as compound expression in initializer [-fpermissive]
+ int reactor::request_event(handle_t handle,event_t evt)
+ 
+ 编译的时候，出现这个上面的错误.
+ 
+ 解决方法：
+ 在reactor.h中
+ 将 #include "demultiplexer.h" 删除
+ 
+ 
+ freedom@robot:~/git/platform$ g++ -o reactor_client client.cpp demultiplexer.cpp reactor.cpp
+reactor.cpp: In constructor ‘reactorer::reactor::reactor()’:
+reactor.cpp:6:38: error: invalid use of incomplete type ‘class reactorer::demultiplexer’
+  m_demultiplexer = new demultiplexer();
+                                      ^
+In file included from reactor.cpp:1:0:
+reactor.h:16:7: error: forward declaration of ‘class reactorer::demultiplexer’
+ class demultiplexer;
+       ^
+reactor.cpp: In destructor ‘virtual reactorer::reactor::~reactor()’:
+reactor.cpp:10:9: warning: possible problem detected in invocation of delete operator: [enabled by default]
+  delete m_demultiplexer;
+         ^
+reactor.cpp:10:9: warning: invalid use of incomplete type ‘class reactorer::demultiplexer’ [enabled by default]
+In file included from reactor.cpp:1:0:
+reactor.h:16:7: warning: forward declaration of ‘class reactorer::demultiplexer’ [enabled by default]
+ class demultiplexer;
+       ^
+reactor.cpp:10:9: note: neither the destructor nor the class-specific operator delete will be called, even if they are declared when the class is defined
+  delete m_demultiplexer;
+ 
+ 
+ 解决方法：
+ 在reactor.cpp 中
+ 添加头文件#include "demultiplexer.h"
+ 编译器就会根据该头文件找到class demultiplexer的具体定义
+ 
+ 常见问题一：invalid use of incomplete type
+出现这个问题，表明编译器不知道所用的struct 或者是class的具体实现，通常出现在如下情况：假设我们有一个class some定义在some.h中，实现在some.cpp中，我
+们在other.cpp中要用到这个some 的方法，于是我们再other.h中声明可一个class some，并声明了要用到的方法，这样就会导致上述的问题，
+解决这个问题的方法是：在other.cpp中include some.h，这样编译器就会根据该头文件找到class some的具体定义，问题也就解决了。
+
+
+reedom@robot:~/git/platform$ g++ -o reactor_client client.cpp demultiplexer.cpp reactor.cpp
+reactor.cpp: In member function ‘int reactorer::reactor::register_handler(reactorer::event_t, reactorer::event_handler*)’:
+reactor.cpp:17:28: error: could not convert ‘(it = (*(const std::_Rb_tree_iterator<std::pair<const int, reactorer::event_handler*> >*)(&((reactorer::reactor*)this)->reactorer::reactor::handlers_map.std::map<_Key, _Tp, _Compare, _Alloc>::end<int, reactorer::event_handler*, std::less<int>, std::allocator<std::pair<const int, reactorer::event_handler*> > >())))’ from ‘std::map<int, reactorer::event_handler*>::iterator {aka std::_Rb_tree_iterator<std::pair<const int, reactorer::event_handler*> >}’ to ‘bool’
+  if(it = handlers_map.end())
+
+  解决方法：
+ 原来 在register_handler()中，有一个判断是
+   if(it ==handlers_map.end())
+   改为
+  if(it == handlers_map.end())
+  
+  接着又出现了下面的错误
+  freedom@robot:~/git/platform$ g++ -o reactor_client client.cpp demultiplexer.cpp reactor.cpp
+/tmp/ccNudcQp.o：在函数‘client::client()’中：
+client.cpp:(.text._ZN6clientC2Ev[_ZN6clientC5Ev]+0x14)：对‘reactorer::event_handler::event_handler()’未定义的引用
+/tmp/ccNudcQp.o：在函数‘client::~client()’中：
+client.cpp:(.text._ZN6clientD2Ev[_ZN6clientD5Ev]+0x2e)：对‘reactorer::event_handler::~event_handler()’未定义的引用
+client.cpp:(.text._ZN6clientD2Ev[_ZN6clientD5Ev]+0x54)：对‘reactorer::event_handler::~event_handler()’未定义的引用
+/tmp/ccNudcQp.o:(.rodata._ZTI6client[_ZTI6client]+0x10)：对‘typeinfo for reactorer::event_handler’未定义的引用
+/tmp/ccCaQjgx.o：在函数‘reactorer::reactor::reactor()’中：
+reactor.cpp:(.text+0x3b)：对‘reactorer::demultiplexer::demultiplexer()’未定义的引用
+collect2: error: ld returned 1 exit status
+
+j解決方法：
+雖然在demultiplexer中declare 了constructer unconstructer
+在demultiplexer.cpp中沒有定意 demultiplexer 的constructer unconstructer
+
+
+freedom@robot:~/git/platform$ g++ -o reactor_client client.cpp demultiplexer.cpp reactor.cpp
+/tmp/ccLCXHVH.o：在函数‘client::client()’中：
+client.cpp:(.text._ZN6clientC2Ev[_ZN6clientC5Ev]+0x14)：对‘reactorer::event_handler::event_handler()’未定义的引用
+/tmp/ccLCXHVH.o：在函数‘client::~client()’中：
+client.cpp:(.text._ZN6clientD2Ev[_ZN6clientD5Ev]+0x2e)：对‘reactorer::event_handler::~event_handler()’未定义的引用
+client.cpp:(.text._ZN6clientD2Ev[_ZN6clientD5Ev]+0x54)：对‘reactorer::event_handler::~event_handler()’未定义的引用
+/tmp/ccLCXHVH.o:(.rodata._ZTI6client[_ZTI6client]+0x10)：对‘typeinfo for reactorer::event_handler’未定义的引用
+collect2: error: ld returned 1 exit status
+
+
+
+/tmp/ccx8RZYn.o:(.rodata._ZTVN9reactorer13event_handlerE[_ZTVN9reactorer13event_handlerE]+0x28)：对‘reactorer::event_handler::read_event()’未定义的引用
+/tmp/ccx8RZYn.o:(.rodata._ZTVN9reactorer13event_handlerE[_ZTVN9reactorer13event_handlerE]+0x30)：对‘reactorer::event_handler::write_event()’未定义的引用
+collect2: error: ld returned 1 exit status
+
+
+
+freedom@robot:~/git/platform$ g++ -o reactor_server server.cpp demultiplexer.cpp reactor.cpp
+server.cpp:53:37: error: invalid use of ‘::’
+  virtual void reactorer::read_event()
+ 解決方法：
+ 將  virtual void reactorer::read_event() 中reactorer::去掉
+ 
+ 
+ server.cpp: In member function ‘virtual void server::read_event()’:
+server.cpp:62:37: error: cannot convert ‘_IO_FILE*’ to ‘char*’ for argument ‘1’ to ‘int sprintf(char*, const char*, ...)’
+    sprintf(stderr,"%s",g_read_buffer);
+                                     ^
+ 將sprintf  改成fprintf
+ 
+ 
+ 
+ server.cpp: In function ‘int main(int, char**)’:
+server.cpp:88:34: error: invalid conversion from ‘char*’ to ‘short unsigned int’ [-fpermissive]
+   server m_server(argv[1], argv[2]);
+                                  ^
+server.cpp:21:2: error:   initializing argument 2 of ‘server::server(const char*, short unsigned int)’ [-fpermissive]
+  server(const char * ip, unsigned short port):
+ 
+ 
+方法：
+原來是：
+server m_server(argv[1], argv[2]);
+改爲：
+server m_server(argv[1], atoi(argv[2]));
+ 
+  
+   g++ -o reactor_client client.cpp demultiplexer.cpp reactor.cpp
+client.cpp: In member function ‘virtual void client::write_event()’:
+client.cpp:66:46: error: cannot convert ‘char*’ to ‘FILE* {aka _IO_FILE*}’ for argument ‘1’ to ‘int fprintf(FILE*, const char*, ...)’
+   int len = fprintf(write_buff, "hello! \r\n");
+  
+  将fprintf 换成sprintf
+  
+  freedom@robot:~/git/platform$ g++ -o reactor_server server.cpp demultiplexer.cpp reactor.cpp
+server.cpp: In member function ‘virtual void server::read_event()’:
+server.cpp:119:61: error: ‘reactorer::event_handler’ is an inaccessible base of ‘request_handler’
+    if(g_reactor.register_handler(reactorer::EV_READ, request) != 0);
+                          
+ 解决方法：
+ 原来的代码是：                               
+ class request_handler :   reactorer::event_handler{
+ 添加public 
+  class request_handler : public   reactorer::event_handler{
+  
+  
