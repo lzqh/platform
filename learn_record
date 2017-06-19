@@ -43,5 +43,9 @@ DESCRIPTION
  RETURN VALUE
        On  success,  zero is returned.  On error, -1 is returned, and errno is
        set appropriately.
- 
- 
+ what how why
+ 线程和处理器的关系
+ 处理器怎样分配时间给 多线程或者多进程
+ 什么是堆（neap）,栈(stack), 堆和栈的区别
+https://randu.org/tutorials/threads/
+http://www.yolinux.com/TUTORIALS/LinuxTutorialPosixThreads.html
