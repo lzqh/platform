@@ -6,6 +6,27 @@ https://www.ulduzsoft.com/2014/01/select-poll-epoll-practical-difference-for-sys
 https://www.safaribooksonline.com/library/view/linux-system-programming/0596009585/
 https://ece.uwaterloo.ca/~dwharder/icsrts/C/
 
+2017.6.30
+http://akaedu.github.io/book/  Linux C编程一站式学习
+https://www.osadl.org/RTLWS-2017.rtlws-2017.0.html 
+http://www.oschina.net/news/66925/real-time-linux-collaborative-project  Linux 基金会推出 Real Time Linux 协作项目
+
+http://blog.exbot.net/archives/2966  机器人程序设计——之如何正确入门ROS | 硬创公开课（附视频/PPT）
+http://www.ee.surrey.ac.uk/Teaching/Unix/   UNIX Tutorial for Beginners
+http://blog.csdn.net/tong646591/article/details/8372370
+http://blog.csdn.net/tong646591/article/details/8372370   从30岁到35岁：为你的生命多积累一些厚度——与之共勉zz
+ 
+新配置环境后编译Platform时发生如下错误错误：/bin/sh: 1: pahole: not found
+安装dwarves便可解决sudo apt-get install dwarves
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=621530  
+
+http://users.cs.fiu.edu/~weiss/#ecp   Mark Allen Weiss   Data Structures and Algorithm Analysis in C (Second Edition)
+
+leetcode 
+
+https://github.com/marceloeng/recoface
+https://www.youtube.com/watch?v=XQ3Hef1G6WI  SLAM-Based Navigation of An Autonomous Driving Car
+https://www.youtube.com/watch?v=opsmd5yuBF0   Autonomous Drifting using Machine Learning
 
 NAME
        socket - create an endpoint for communication
@@ -49,3 +70,6 @@ DESCRIPTION
  什么是堆（neap）,栈(stack), 堆和栈的区别
 https://randu.org/tutorials/threads/
 http://www.yolinux.com/TUTORIALS/LinuxTutorialPosixThreads.html
+
+虚函数和纯虚函数的区别
+
